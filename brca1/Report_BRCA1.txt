@@ -1,0 +1,22 @@
+
+NO MUTATIONS WERE IDENTIFIED
+
+From the analysis, no pathogenic variants were identified that increased the risk of breast cancer.
+This does not completely eliminate the risk of breast cancer, environmental and living conditions also play a role.
+
+Genes analyzed in this analysis includes:
+	BRCA1
+
+The following variants were identified:
+	#CHR	LOCATION	REF	ALT	DEPTH PATHOGENICITY
+	chr17	41196408	G	A	59	Benign(ENIGMA); Benign (ClinVar)
+	chr17	41197274	C	A	78	Benign(ENIGMA); Benign (ClinVar)
+	chr17	41223094	T	C	103	Benign(ENIGMA); Benign,no_known_pathogenicity (ClinVar); Pending (BIC)
+	chr17	41234470	A	G	119	Benign(ENIGMA); Benign (ClinVar); Class 1 (BIC)
+
+Methodology and Limitations:
+Mutations associated with the BRCA1 gene are identified in this analysis to test for risk of breast cancer. The DNA samples are sequenced and variants are found using Haplotype Caller.
+The pathogenic nature of variants are tested by comparing against an external database- brcaExchange.
+It should be noted that so far variants have been tested against only one gene: BRCA1. The study will soon be expanded to include all breast and ovarian cancer related genes. 
+Furthermore, the depth of coverage of the variants has also been recorded to ensure that the coverage is not too small and some data is not missed via this analysis. A graph showing the depth of coverage per base of the variant has also been attached.
+

@@ -1,0 +1,5 @@
+#Chr	Location	Ref	Alt	Depth Pathogenicity
+chr17	41196408	G	A	59	Benign(ENIGMA); Benign (ClinVar)
+chr17	41197274	C	A	78	Benign(ENIGMA); Benign (ClinVar)
+chr17	41223094	T	C	103	Benign(ENIGMA); Benign,no_known_pathogenicity (ClinVar); Pending (BIC)
+chr17	41234470	A	G	119	Benign(ENIGMA); Benign (ClinVar); Class 1 (BIC)
