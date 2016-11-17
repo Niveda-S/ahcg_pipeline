@@ -70,3 +70,37 @@ head -100000 NIST7035_TAAGGCGA_L001_R2_001.fastq > test_r2.fastq
 ```{sh}
 python ahcg_pipeline.py -t lib/Trimmomatic-0.36/trimmomatic-0.36.jar -b lib/bowtie2-2.2.9/bowtie2 -p lib/picard.jar -g lib/GenomeAnalysisTK.jar -i Test/test_r1.fastq Test/test_r2.fastq -w Bowtie_index/hg19 -d resources/dbsnp/dbsnp_138.hg19.vcf -r resources/genome/hg19.fa -a lib/Trimmomatic-0.36/adapters/TruSeq3-SE.fa -o ./
 ```
+
+##Mapping regions of interest for BRCA1##
+Steps for extracting reads mapping to BRCA1 from NA12878 HiSeq Exome dataset:
+
+1. Downloading the NA12878 HiSeq Exome dataset:
+     The bam files for the sample can be downloaded from the ftp link mentioned on GIAB GitHub page.
+     There are four runs for this sample, we can start by downloading one of them and extracting the reads.
+
+2. Using samtools to subset the bam file to regions corresponding to BRCA1:
+     Using the bed file containing the BRCA1 exonic coordinates we can subset the NA12878 sample using samtools
+
+     samtools view -L <bed file> -b -o < outout bam file > < input bam file >
+
+     Note: -b just specifies that the output needs to be a bam file.
+
+3. Using bedtools to convert the bam file to a fastq file:
+     From the brca1 bam file we now extract the reads aligning to the region using bedtools
+
+     bedtools bamtofastq -i <bam file> -fq < fastq r1> -fq2 < fastq r2>
+
+## Variant Quality Score Recalibration (VQSR)##
+```{sh}
+jre1.8.0_101/bin/java -Xmx4g -jar lib/GenomeAnalysisTK.jar 
+-T VariantRecalibrator 
+-R resources/genome/hg19.fa 
+-input NA12878_variants.vcf 
+-resource:hapmap,known=false,training=true,truth=true,prior=15.0 hapmap_3.3.b37.sites.vcf 
+-resource:omni,known=false,training=true,truth=false,prior=12.0 1000G_omni2.5.b37.sites.vcf 
+-resource:1000G,known=false,training=true,truth=false,prior=10.0 1000G_phase1.snps.high_confidence.vcf 
+-resource:dbsnp,known=true,training=false,truth=false,prior=2.0 resources/dbsnp/dbsnp_138.hg19.vcf 
+-an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR -mode SNP 
+-recalFile output.recal -tranchesFile output.tranches -rscriptFile output.plots.R
+```
+
