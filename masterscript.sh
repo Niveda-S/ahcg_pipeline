@@ -31,7 +31,7 @@ while getopts "b:p:t:o:i:g:w:d:r:a:e:n:" opt; do
 done
 
 #Convert bam to fastq
-bedtools bamtofastq -i $BAM_PATH -fq Control1_1.fq -fq2 Control1_2.fq
+#bedtools bamtofastq -i $BAM_PATH -fq Control1_1.fq -fq2 Control1_2.fq
 
 #Run variant calling pipeline
 python $PIPELINE_PATH -t $TRIM_PATH -b $BOWTIE_PATH -p $PICARD_PATH -g $GATK_PATH -i Control1_1.fq Control1_2.fq -w $BOWTIE_INDEX -d $DBSNP_PATH -r $REF_PATH -a $ADAPTER_PATH -o ./variants.vcf
