@@ -104,3 +104,19 @@ jre1.8.0_101/bin/java -Xmx4g -jar lib/GenomeAnalysisTK.jar
 -recalFile output.recal -tranchesFile output.tranches -rscriptFile output.plots.R
 ```
 
+## DCM ##
+```{sh}
+#shrink clinvar to just DCM genes
+bedtools intersect -a clinvar.vcf.gz -b dcm_gene_list.bed -header > clinvar_allfrombed.vcf
+
+#shrink variants to just DCM genes
+bedtools intersect -a patient2_variants_recal.vcf -b dcm_gene_list.bed -header > patient2_dcm_final.vcf
+
+#match variants to clinvar
+bedtools intersect -b patient2_dcm_final.vcf -a clinvar_allfrombed.vcf -header > patient2_intersect_clinvar.vcf
+
+#generate simple report on findings
+python3 parse_clnsig.py -i patient2_intersect_clinvar.vcf.gz 2>&1 | tee patient2_simple_report.txt
+cut -c 24- patient2_simple_report.txt
+```
+
