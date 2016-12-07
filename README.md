@@ -104,19 +104,46 @@ jre1.8.0_101/bin/java -Xmx4g -jar lib/GenomeAnalysisTK.jar
 -recalFile output.recal -tranchesFile output.tranches -rscriptFile output.plots.R
 ```
 
-## DCM ##
+## Update Github ##
+```{sh}
+git add .
+git commit -m "Message"
+git push origin master
+```
+
+# DCM #
+
+## Clinical Report Generation ##
 ```{sh}
 #shrink clinvar to just DCM genes
 bedtools intersect -a clinvar.vcf.gz -b dcm_gene_list.bed -header > clinvar_allfrombed.vcf
 
 #shrink variants to just DCM genes
-bedtools intersect -a patient2_variants_recal.vcf -b dcm_gene_list.bed -header > patient2_dcm_final.vcf
+bedtools intersect -a patient1_variants_recal.vcf -b dcm_gene_list.bed -header > patient2_dcm_final.vcf
 
 #match variants to clinvar
-bedtools intersect -b patient2_dcm_final.vcf -a clinvar_allfrombed.vcf -header > patient2_intersect_clinvar.vcf
+bedtools intersect -b patient1_dcm_final.vcf -a clinvar_allfrombed.vcf -header > patient2_intersect_clinvar.vcf
 
 #generate simple report on findings
-python3 parse_clnsig.py -i patient2_intersect_clinvar.vcf.gz 2>&1 | tee patient2_simple_report.txt
+python3 parse_clnsig.py -i patient1_intersect_clinvar.vcf.gz 2>&1 | tee patient2_simple_report.txt
 cut -c 24- patient2_simple_report.txt
 ```
+
+## Coverage Calculator ##
+```{sh}
+samtools view -L $GENE_LIST $BAM_PATH -b > new.bam
+bedtools genomecov -ibam new.bam -bga > coverage_output.bed
+bedtools intersect -loj -split -a $GENE_LIST -b coverage_output.bed > cov.bed
+awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n", $1,$2,$3,$8,$4,$6)}' cov.bed > new_cov.bed
+python cov.py new_cov.bed new_cov_depth.txt
+awk '{print >> $4}' new_cov_depth.txt
+genes=( "LMNA" "MYBPC3" "MYH6" "MYH7" "SCNSA" "TNNT2" )
+for i in "${genes[@]}"
+do
+	Rscript draw_depth.R "$i" "$i".png
+done
+```
+
+## Create Report as PDF ##
+convert patient1_simple_report.txt LMNA.png MYBPC3.png MYH6.png MYH7.png SCNSA.png TNNT2.png report.pdf
 
