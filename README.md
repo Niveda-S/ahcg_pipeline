@@ -34,28 +34,28 @@ To access help use the following command:
 python3 ahcg_pipeline.py -h
 ```
 
-##Workflow##
-###Download Reference Files###
+## Workflow
+### Download Reference Files
 wget www.prism.gatech.edu/~sravishankar9/resources.tar.gz
 This contains hg19 and dbsnp vcf for hg19
 
-###Bowtie indexes###
+### Bowtie indexes
 bowtie2-build -f hg19.fa
 Assigns reference as hg19.fa 
 
-###Install samtools###
+### Install samtools
 sudo apt-get install samtools
 
-###Install Java###
+### Install Java
 sudo apt-get install openjdk-8-jre
 
-###Create index file using samtools###
+### Create index file using samtools
 samtools faidx resources/genome/hg19.fa
 
-###Create dict file using Picard###
+### Create dict file using Picard
 jre1.8.0_101/bin/java -jar lib/picard.jar CreateSequenceDictionary R=resources/genome/hg19.fa O=hg19.dict
 
-###Test Files###
+### Test Files
 ```{sh}
 wget ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/NIST7035_TAAGGCGA_L001_R1_001.fastq.gz
 wget ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/NIST7035_TAAGGCGA_L001_R2_001.fastq.gz
@@ -66,12 +66,12 @@ head -100000 NIST7035_TAAGGCGA_L001_R1_001.fastq > test_r1.fastq
 head -100000 NIST7035_TAAGGCGA_L001_R2_001.fastq > test_r2.fastq
 ```
 
-###Run the script###
+### Run the script
 ```{sh}
 python ahcg_pipeline.py -t lib/Trimmomatic-0.36/trimmomatic-0.36.jar -b lib/bowtie2-2.2.9/bowtie2 -p lib/picard.jar -g lib/GenomeAnalysisTK.jar -i Test/test_r1.fastq Test/test_r2.fastq -w Bowtie_index/hg19 -d resources/dbsnp/dbsnp_138.hg19.vcf -r resources/genome/hg19.fa -a lib/Trimmomatic-0.36/adapters/TruSeq3-SE.fa -o ./
 ```
 
-##Mapping regions of interest for BRCA1##
+## Mapping regions of interest for BRCA1
 Steps for extracting reads mapping to BRCA1 from NA12878 HiSeq Exome dataset:
 
 1. Downloading the NA12878 HiSeq Exome dataset:
@@ -90,7 +90,7 @@ Steps for extracting reads mapping to BRCA1 from NA12878 HiSeq Exome dataset:
 
      bedtools bamtofastq -i <bam file> -fq < fastq r1> -fq2 < fastq r2>
 
-## Variant Quality Score Recalibration (VQSR)##
+## Variant Quality Score Recalibration (VQSR)
 ```{sh}
 jre1.8.0_101/bin/java -Xmx4g -jar lib/GenomeAnalysisTK.jar 
 -T VariantRecalibrator 
@@ -104,16 +104,16 @@ jre1.8.0_101/bin/java -Xmx4g -jar lib/GenomeAnalysisTK.jar
 -recalFile output.recal -tranchesFile output.tranches -rscriptFile output.plots.R
 ```
 
-## Update Github ##
+## Update Github 
 ```{sh}
 git add .
 git commit -m "Message"
 git push origin master
 ```
 
-# DCM #
+# DCM 
 
-## Clinical Report Generation ##
+## Clinical Report Generation 
 ```{sh}
 #shrink clinvar to just DCM genes
 bedtools intersect -a clinvar.vcf.gz -b dcm_gene_list.bed -header > clinvar_allfrombed.vcf
@@ -129,7 +129,7 @@ python3 parse_clnsig.py -i patient1_intersect_clinvar.vcf.gz 2>&1 | tee patient2
 cut -c 24- patient2_simple_report.txt
 ```
 
-## Coverage Calculator ##
+## Coverage Calculator 
 ```{sh}
 samtools view -L $GENE_LIST $BAM_PATH -b > new.bam
 bedtools genomecov -ibam new.bam -bga > coverage_output.bed
@@ -144,6 +144,6 @@ do
 done
 ```
 
-## Create Report as PDF ##
+## Create Report as PDF 
 convert patient1_simple_report.txt LMNA.png MYBPC3.png MYH6.png MYH7.png SCNSA.png TNNT2.png report.pdf
 
